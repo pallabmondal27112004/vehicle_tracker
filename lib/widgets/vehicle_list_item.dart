@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_colors.dart';
 import '../models/vehicle.dart';
 
 class VehicleListItem extends StatelessWidget {
@@ -17,8 +18,6 @@ class VehicleListItem extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
@@ -37,23 +36,50 @@ class VehicleListItem extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
-                    _CoordRow(
-                      latitude: vehicle.latitude,
-                      longitude: vehicle.longitude,
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '${vehicle.latitude.toStringAsFixed(4)}, ${vehicle.longitude.toStringAsFixed(4)}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    _StatsRow(
-                      direction: vehicle.direction,
-                      speed: vehicle.speed,
-                      course: vehicle.course,
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        _Chip(
+                          label: '${vehicle.speed.toStringAsFixed(1)} km/h',
+                          color: isMoving ? AppColors.primary : AppColors.parked,
+                        ),
+                        const SizedBox(width: 6),
+                        _Chip(
+                          label: vehicle.direction,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 6),
+                        _Chip(
+                          label: '${vehicle.course.toStringAsFixed(0)}°',
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+              const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
             ],
           ),
         ),
@@ -73,7 +99,7 @@ class _VehicleIcon extends StatelessWidget {
       width: 42,
       height: 42,
       decoration: BoxDecoration(
-        color: isMoving ? Colors.blueGrey[700] : Colors.grey[400],
+        color: isMoving ? AppColors.primary : AppColors.parked,
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Icon(Icons.local_shipping, color: Colors.white, size: 22),
@@ -81,77 +107,27 @@ class _VehicleIcon extends StatelessWidget {
   }
 }
 
-class _CoordRow extends StatelessWidget {
-  final double latitude;
-  final double longitude;
-
-  const _CoordRow({required this.latitude, required this.longitude});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Icon(Icons.location_on, size: 13, color: Colors.grey),
-        const SizedBox(width: 3),
-        _Field(label: 'Lat', value: latitude.toStringAsFixed(4)),
-        const SizedBox(width: 12),
-        _Field(label: 'Lon', value: longitude.toStringAsFixed(4)),
-      ],
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  final String direction;
-  final double speed;
-  final double course;
-
-  const _StatsRow({
-    required this.direction,
-    required this.speed,
-    required this.course,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Icon(Icons.explore, size: 13, color: Colors.grey),
-        const SizedBox(width: 3),
-        _Field(label: 'Dir', value: direction),
-        const SizedBox(width: 12),
-        _Field(label: 'Speed', value: '${speed.toStringAsFixed(1)} km/h'),
-        const SizedBox(width: 12),
-        _Field(label: 'Course', value: '${course.toStringAsFixed(0)}°'),
-      ],
-    );
-  }
-}
-
-class _Field extends StatelessWidget {
+class _Chip extends StatelessWidget {
   final String label;
-  final String value;
+  final Color color;
 
-  const _Field({required this.label, required this.value});
+  const _Chip({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: const TextStyle(fontSize: 12),
-        children: [
-          TextSpan(
-            text: '$label: ',
-            style: const TextStyle(color: Colors.grey),
-          ),
-          TextSpan(
-            text: value,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          color: color,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

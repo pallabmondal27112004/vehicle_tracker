@@ -13,11 +13,8 @@ class DashboardScreen extends StatelessWidget {
     final vehicles = provider.vehicles;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Vehicle Tracking'),
-        backgroundColor: Colors.blueGrey[800],
-        foregroundColor: Colors.white,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(28),
           child: Padding(
@@ -34,23 +31,26 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: vehicles.isEmpty
           ? const Center(child: Text('No vehicles found.'))
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: vehicles.length,
-              itemBuilder: (context, index) {
-                final vehicle = vehicles[index];
-                return VehicleListItem(
-                  vehicle: vehicle,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => VehicleTrackingScreen(vehicle: vehicle),
-                      ),
-                    );
-                  },
-                );
-              },
+          : SafeArea(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: vehicles.length,
+                itemBuilder: (context, index) {
+                  final vehicle = vehicles[index];
+                  return VehicleListItem(
+                    vehicle: vehicle,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              VehicleTrackingScreen(vehicle: vehicle),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
     );
   }

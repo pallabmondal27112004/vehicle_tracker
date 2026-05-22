@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../models/vehicle.dart';
 import '../../data/datasources/tracking_mock_datasource.dart';
 import '../../data/datasources/tracking_remote_datasource.dart';
@@ -38,11 +39,8 @@ class VehicleTrackingScreen extends StatelessWidget {
         vehicleId: vehicle.id,
       ),
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
         appBar: AppBar(
           title: Text(vehicle.vehicleNumber),
-          backgroundColor: Colors.blueGrey[800],
-          foregroundColor: Colors.white,
           actions: [
             // Toggle button — visible in AppBar so it's always reachable
             Consumer<TrackingProvider>(
@@ -50,7 +48,9 @@ class VehicleTrackingScreen extends StatelessWidget {
                 final active = provider.isTrackingActive;
                 return IconButton(
                   icon: Icon(
-                    active ? Icons.pause_circle_outline : Icons.play_circle_outline,
+                    active
+                        ? Icons.pause_circle_outline
+                        : Icons.play_circle_outline,
                   ),
                   tooltip: active ? 'Stop Tracking' : 'Resume Tracking',
                   onPressed: () {
@@ -119,14 +119,20 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.signal_wifi_connected_no_internet_4,
-                size: 56, color: Colors.grey[400]),
+            Icon(
+              Icons.signal_wifi_connected_no_internet_4,
+              size: 56,
+              color: Colors.grey[400],
+            ),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 14, color: Colors.grey[600], height: 1.5),
+                fontSize: 14,
+                color: Colors.grey[600],
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -136,8 +142,10 @@ class _ErrorView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueGrey[700],
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
             ),
           ],
@@ -164,8 +172,7 @@ class _MapView extends StatelessWidget {
         position: currentPos,
         infoWindow: InfoWindow(
           title: vehicle.vehicleNumber,
-          snippet:
-              '${data.speed.toStringAsFixed(1)} km/h · ${data.direction}',
+          snippet: '${data.speed.toStringAsFixed(1)} km/h · ${data.direction}',
         ),
       ),
     };
@@ -175,7 +182,7 @@ class _MapView extends StatelessWidget {
             Polyline(
               polylineId: const PolylineId('route'),
               points: provider.routePoints,
-              color: Colors.blueGrey,
+              color: AppColors.primary,
               width: 4,
               startCap: Cap.roundCap,
               endCap: Cap.roundCap,
@@ -183,32 +190,36 @@ class _MapView extends StatelessWidget {
           }
         : <Polyline>{};
 
-    return Column(
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              GoogleMap(
-                initialCameraPosition:
-                    CameraPosition(target: currentPos, zoom: 15),
-                markers: markers,
-                polylines: polylines,
-                onMapCreated: provider.onMapCreated,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                mapToolbarEnabled: false,
-              ),
-              // Small status pill — shows whether live updates are running.
-              Positioned(
-                top: 12,
-                left: 12,
-                child: _TrackingBadge(isActive: provider.isTrackingActive),
-              ),
-            ],
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: currentPos,
+                    zoom: 15,
+                  ),
+                  markers: markers,
+                  polylines: polylines,
+                  onMapCreated: provider.onMapCreated,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
+                ),
+                // Small status pill — shows whether live updates are running.
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: _TrackingBadge(isActive: provider.isTrackingActive),
+                ),
+              ],
+            ),
           ),
-        ),
-        VehicleInfoCard(data: data),
-      ],
+          VehicleInfoCard(data: data),
+        ],
+      ),
     );
   }
 }
@@ -224,8 +235,8 @@ class _TrackingBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: isActive
-            ? Colors.green.shade700.withValues(alpha: 0.9)
-            : Colors.grey.shade700.withValues(alpha: 0.9),
+            ? AppColors.moving.withValues(alpha: 0.92)
+            : AppColors.parked.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

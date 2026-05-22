@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'core/services/background_task_service.dart';
 import 'core/services/notification_service.dart';
+import 'core/theme/app_theme.dart';
 import 'providers/dashboard_provider.dart';
 import 'screens/dashboard_screen.dart';
 
@@ -24,12 +25,9 @@ class VehicleTrackingApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => DashboardProvider())],
       child: MaterialApp(
-        title: 'Vehicle Tracking',
+        title: 'TrackNova',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.theme,
         home: const DashboardScreen(),
       ),
     );
