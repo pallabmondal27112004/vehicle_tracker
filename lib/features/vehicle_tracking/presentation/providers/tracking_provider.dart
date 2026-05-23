@@ -44,34 +44,25 @@ class TrackingProvider extends ChangeNotifier {
   Future<void> startTracking() async {
     if (_isTrackingActive) return;
     _isTrackingActive = true;
+    _safeNotify(); // update button icon immediately on tap
 
-    // Start the timer immediately — don't let async permission/storage calls
-    // delay when the first fetch fires.
     _startPolling();
-
-    // Show the permission dialog at the natural moment (tracking start).
-    // Fire-and-forget is fine here — the first notification will still show
-    // because the dialog resolves before _syncNotificationAndStorage runs.
     NotificationService.requestPermissions();
-
     await TrackingStorageService.setTrackingActive(true);
     await BackgroundTaskService.startPeriodicTracking();
-    _safeNotify();
   }
 
   Future<void> stopTracking() async {
     if (!_isTrackingActive) return;
     _isTrackingActive = false;
-
     _timer?.cancel();
     _timer = null;
+    _safeNotify(); // update button icon immediately on tap
 
     await TrackingStorageService.setTrackingActive(false);
     await BackgroundTaskService.stopPeriodicTracking();
     await NotificationService.cancelTrackingNotification();
     await TrackingStorageService.clear();
-
-    _safeNotify();
   }
 
   void _startPolling() {

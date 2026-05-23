@@ -17,11 +17,11 @@ class TrackingMockDatasource implements TrackingDatasource {
     required double initialSpeed,
     required double initialCourse,
     required String vehicleNumber,
-  })  : _lat = initialLat,
-        _lon = initialLon,
-        _speed = initialSpeed,
-        _course = initialCourse,
-        _vehicleNumber = vehicleNumber;
+  }) : _lat = initialLat,
+       _lon = initialLon,
+       _speed = initialSpeed,
+       _course = initialCourse,
+       _vehicleNumber = vehicleNumber;
 
   @override
   Future<TrackingData> getTracking(String vehicleId) async {
